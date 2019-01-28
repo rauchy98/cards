@@ -1,0 +1,5 @@
+export const SET_MODE = 'SET_MODE'
+export const SET_COLLECTION = 'SET_COLLECTION'
+
+export const RESET_MODE = 'RESET_MODE'
+export const RESET_COLLECTION = 'RESET_COLLECTION'

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { REPEAT, LEARNED, CARD_SIZE_MULTIPLIER, ANOTHER_CARD_SIZE_MULTIPLIER } from './constants'
-import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing } from 'react-native'
+import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing, TouchableOpacity } from 'react-native'
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -11,7 +11,7 @@ const instructions = Platform.select({
 
 const { height, width } = Dimensions.get('window');
 
-export default class ClassicCard extends Component {
+export default class TestingCard extends Component {
 
   constructor(props) {
     super(props);
@@ -44,102 +44,7 @@ export default class ClassicCard extends Component {
           duration: 100,
           ActiveNativeDriver: true,
         }).start();
-      },
-      onPanResponderMove: (e, gesture) => {
-        const isInRadius = Math.sqrt(gesture.dx * gesture.dx + gesture.dy * gesture.dy);
-        this.setState({
-          isInRadius
-        })
-        this.state.color.setValue(isInRadius);
-
-        return Animated.event([
-          null, { dx: this.state.pan.x, dy: this.state.pan.y }
-        ])(e, gesture);
-      },
-      onPanResponderRelease: (e, gesture) => {
-        
-        Animated.timing(this.state.selected, {
-          toValue: 0,
-          duration: 130,
-          ActiveNativeDriver: true,
-        }).start();
-
-        if (Math.abs(gesture.dx) < 5 && Math.abs(gesture.dy) < 5) {
-          if (this.state.rotate._value === 0) {
-            Animated.timing(this.state.rotate, {
-              toValue: 50,
-              duration: 150,
-              ActiveNativeDriver: true,
-              easing: Easing.inOut(Easing.in)
-            }).start(res => {
-              this.setState(prevState => ({show: prevState.answer}), () => {
-                Animated.timing(this.state.cardScale, {
-                  toValue: -1,
-                  duration: 1,
-                  ActiveNativeDriver: true,
-                }).start(res => {
-                  Animated.timing(this.state.rotate, {
-                    toValue: 100,
-                    duration: 250,
-                    easing: Easing.out(Easing.in),
-                    ActiveNativeDriver: true,
-                  }).start();
-                });
-              })
-            });
-          }
-          else {
-            Animated.timing(this.state.rotate, {
-              toValue: 50,
-              duration: 150,
-              easing: Easing.inOut(Easing.in),
-              ActiveNativeDriver: true,
-            }).start(res => {
-              this.setState(prevState => ({show: prevState.question}), () => {
-                Animated.timing(this.state.cardScale, {
-                  toValue: 1,
-                  duration: 1,
-                  ActiveNativeDriver: true,
-                }).start(res => {
-                  Animated.timing(this.state.rotate, {
-                    toValue: 0,
-                    duration: 250,
-                    easing: Easing.out(Easing.in),
-                    ActiveNativeDriver: true,
-                  }).start();
-                });
-              })
-            });
-          }
-        }
-        else if (this.state.isInRadius > 180 || Math.abs(gesture.vx) > 0.7) {
-          const newVector = {x: gesture.dx * 10, y: gesture.dy * 10};
-
-          const result = this.removeCard(gesture.dx);
-
-          Animated.timing(this.state.pan, {
-            toValue: { x: newVector.x, y: newVector.y },
-            duration: 1000,
-            easing: Easing.out(Easing.quad),
-            ActiveNativeDriver: true,
-          }).start();
-
-          this.props.showResult(result);
-
-          setTimeout(() => {
-            this.props.cardSwiped(this.props.children.id, result);
-          }, 300)
-
-        }
-        else {
-          Animated.spring(this.state.pan, {
-            toValue: { x: 0, y: 0 },
-            ActiveNativeDriver: true,
-            friction: 5
-          }).start();
-        }
       }
-
     });
   }
 
@@ -200,7 +105,14 @@ export default class ClassicCard extends Component {
                 outputRange: [2, 7]
               })
           }]} {...this.panResponder.panHandlers}>
-              <Text style={styles.text}>{this.state.show}</Text>
+            <View style={{backgroundColor: 'blue', width: '100%', height: '65%'}}></View>
+            <View style={{backgroundColor: 'red', width: '100%', height: '35%', flexDirection: 'row', flexWrap: 'wrap'}}>
+              <TouchableOpacity style={{backgroundColor: 'green', width: '50%', height: '50%'}}></TouchableOpacity>
+              <TouchableOpacity style={{backgroundColor: 'grey', width: '50%', height: '50%'}}></TouchableOpacity>
+              <TouchableOpacity style={{backgroundColor: 'black', width: '50%', height: '50%'}}></TouchableOpacity>
+              <TouchableOpacity style={{backgroundColor: 'white', width: '50%', height: '50%'}}></TouchableOpacity>
+            </View>
+              {/* <Text style={styles.text}>{this.state.show}</Text> */}
           </Animated.View>
     )
   }
@@ -212,6 +124,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
+    flex: 1,
+    flexDirection: 'column',
     position: 'absolute',
     borderRadius: 4,
     height: width * 1.4,

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing } from 'react-native'
-import ClassicCard from './ClassicCard';
+import TestingCard from './TestingCard';
 import { REPEAT, LEARNED, SWIPE_TEXT_MULTIPLIER_16_9, SWIPE_TEXT_MULTIPLIER_18_9 } from './constants';
 import _ from 'lodash';
 
@@ -15,7 +15,7 @@ const { height, width } = Dimensions.get('window');
 
 const SWIPE_TEXT_MULTIPLIER = height / width === 16 / 9 ? SWIPE_TEXT_MULTIPLIER_16_9 : SWIPE_TEXT_MULTIPLIER_18_9;
 
-export default class ClassicDeck extends Component {
+export default class TestingDeck extends Component {
 
   state = {
     dx: new Animated.Value(0),
@@ -170,14 +170,14 @@ export default class ClassicDeck extends Component {
   renderCards = () => 
     {
       return this.state.deck.map((card, index) => 
-        <ClassicCard 
+        <TestingCard 
         showResult={this.showResult}
         cardSwiped={this.cardSwiped} 
         general={index === this.state.deck.length - 1 ? true : false} 
         key={card.id} 
         index={index}>
             {card}
-        </ClassicCard>
+        </TestingCard>
       )
   }
   

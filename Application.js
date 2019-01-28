@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
-import Swiper from './Swiper'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing } from 'react-native'
 import ClassicDeck from './ClassicDeck';
+import { Actions } from './Actions';
+import { connect } from 'react-redux';
+import { CLASSIC_MODE, TESTING_MODE } from './constants';
+import TestingDeck from './TestingDeck';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -12,7 +15,7 @@ const instructions = Platform.select({
 
 const { height, width } = Dimensions.get('window');
 
-export default class Application extends Component {
+class Application extends Component {
 
   state = {
     deck: [
@@ -25,10 +28,21 @@ export default class Application extends Component {
     {id: 7, question: 'Plum', answer: 'Слива'}]
   };
 
+  componentWillUnmount() {
+    this.props.resetCollection();
+  }
+
+  renderMode() {
+    switch(this.props.currentMode) {
+      case CLASSIC_MODE: return <ClassicDeck deck={this.props.currentCollection.deck} />
+      case TESTING_MODE: return <TestingDeck deck={this.props.currentCollection.deck} />
+    }
+  }
+
   render () {
     return (
       <View style={styles.container}>
-          <ClassicDeck deck={this.state.deck} />
+        { this.renderMode() }
       </View>
     )
   }
@@ -40,3 +54,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0'
   }
 })
+
+const mapStateToProps = state => {
+  return {
+    currentCollection: state.collectionsStore.current,
+    currentMode: state.modesStore.selectedMode,
+  }
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  resetCollection: () => dispatch(Actions.resetCollection()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Application);

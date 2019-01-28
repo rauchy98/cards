@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import Swiper from './Swiper'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing, TouchableOpacity  } from 'react-native'
+import { connect } from 'react-redux';
+import { Actions } from './Actions';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -11,17 +12,36 @@ const instructions = Platform.select({
 
 const { height, width } = Dimensions.get('window');
 
-export default class PackList extends Component {
+class PackList extends Component {
+
+  componentWillUnmount() {
+    this.props.resetMode();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.isCollectionSelected && nextProps.isCollectionSelected) {
+      this.props.navigation.navigate('Application');
+    }
+  }
 
   render () {
+    console.log(Object.keys(this.props.collections));
     return (
       <View style={styles.container}>
-          <Text style={styles.logoText}>Choose a pack</Text>
+        <Text style={styles.logoText}>Choose a pack</Text>
+        <View style={styles.buttonsContainer}>
+          {
+            this.props.collections.map((collection, index) => (
             <TouchableOpacity 
-            style={styles.button}
-            onPress={() => this.props.navigation.navigate('Application')}>
-                <Text style={styles.buttonText}>Fruits</Text>
+              key={index}
+              style={styles.button}
+              onPress={() => { this.props.setCollection(collection.name) }}>
+                  <Text style={styles.buttonText}>{collection.name}</Text>
             </TouchableOpacity>
+            )
+        )
+      }
+        </View>
       </View>
     )
   }
@@ -39,14 +59,33 @@ const styles = StyleSheet.create({
     fontSize: 25,
     backgroundColor: 'transparent'
   },
+  buttonsContainer: {
+    marginTop: 15
+  },
   button: {
-    margin: 20,
+    margin: 8,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     padding: 20,
     borderRadius: 50
   },
   buttonText: {
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign: 'center'
   }
 })
+
+const mapStateToProps = state => {
+  return {
+    currentCollection: state.collectionsStore.current,
+    isCollectionSelected: state.collectionsStore.isCollectionSelected,
+    collections: state.collectionsStore.collections
+  }
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  setCollection: (collectionKey) => dispatch(Actions.setCollection(collectionKey)),
+  resetMode: () => dispatch(Actions.resetMode()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PackList);

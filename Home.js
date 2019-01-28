@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import Swiper from './Swiper'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing, TouchableOpacity  } from 'react-native'
+import { connect } from 'react-redux';
+import { Actions } from './Actions';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -11,17 +12,30 @@ const instructions = Platform.select({
 
 const { height, width } = Dimensions.get('window');
 
-export default class Home extends Component {
+class Home extends Component {
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.isModeSelected && nextProps.isModeSelected) {
+      this.props.navigation.navigate('PackList');
+    }
+  }
 
   render () {
     return (
       <View style={styles.container}>
-          <Text style={styles.logoText}>Cards</Text>
-            <TouchableOpacity 
+        <Text style={styles.logoText}>Cards</Text>
+        <View style={styles.buttonsContainer}>
+          {
+            this.props.modes.map((mode, index) => {            
+            return <TouchableOpacity 
+            key={index}
             style={styles.button}
-            onPress={() => this.props.navigation.navigate('PackList')}>
-                <Text style={styles.buttonText}>GO</Text>
+            onPress={() => { this.props.setMode(mode) }}>
+                <Text style={styles.buttonText}>{mode}</Text>
             </TouchableOpacity>
+            })
+          }
+        </View>
       </View>
     )
   }
@@ -41,13 +55,31 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   button: {
-    margin: 20,
+    margin: 8,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     padding: 25,
     borderRadius: 50
+  },
+  buttonsContainer: {
+    marginTop: 15
   },
   buttonText: {
     fontSize: 20,
     fontWeight: 'bold'
   }
 })
+
+
+const mapStateToProps = state => {
+  return {
+    currentMode: state.modesStore.selectedMode,
+    isModeSelected: state.modesStore.isModeSelected,
+    modes: state.modesStore.modes
+  }
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  setMode: (mode) => dispatch(Actions.setMode(mode)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
