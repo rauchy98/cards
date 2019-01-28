@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import Swiper from './Swiper'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing } from 'react-native'
-import CardWrapper from './CardWrapper';
-import { REPEAT, LEARNED } from './constants';
+import ClassicCard from './ClassicCard';
+import { REPEAT, LEARNED, SWIPE_TEXT_MULTIPLIER_16_9, SWIPE_TEXT_MULTIPLIER_18_9 } from './constants';
 import _ from 'lodash';
 
 const instructions = Platform.select({
@@ -14,7 +14,9 @@ const instructions = Platform.select({
 
 const { height, width } = Dimensions.get('window');
 
-export default class DeckWrapper extends Component {
+const SWIPE_TEXT_MULTIPLIER = height / width === 16 / 9 ? SWIPE_TEXT_MULTIPLIER_16_9 : SWIPE_TEXT_MULTIPLIER_18_9;
+
+export default class ClassicDeck extends Component {
 
   state = {
     dx: new Animated.Value(0),
@@ -24,6 +26,10 @@ export default class DeckWrapper extends Component {
     repeat: [],
     swipeText: '',
     swipeTextOpacity: new Animated.Value(0),
+    initializeAnimation: false,
+    deckTop: new Animated.Value(height / 2),
+    deckOpacity: new Animated.Value(0),
+    isInitializedDeckAnimation: false
   };
 
   componentWillMount() {
@@ -35,9 +41,28 @@ export default class DeckWrapper extends Component {
   componentDidMount() {
     Animated.timing(this.state.backgroundTextOpacity, {
         toValue: 1,
-        duration: 700,
+        duration: 300,
         ActiveNativeDriver: true,
       }).start()
+
+      this.initializeDeckAnimation();
+  }
+
+  initializeDeckAnimation() {
+    Animated.parallel([
+      Animated.timing(this.state.deckTop, {
+        toValue: 0,
+        duration: 700,
+        ActiveNativeDriver: true,
+      }),
+      Animated.timing(this.state.deckOpacity, {
+        toValue: 1,
+        duration: 700,
+        ActiveNativeDriver: true,
+      })
+    ]).start(res => {
+      this.setState({isInitializedDeckAnimation: true})
+    });
   }
 
   showResult = (result) => {
@@ -100,9 +125,26 @@ export default class DeckWrapper extends Component {
         deck
     }, () => {
         if (this.state.deck.length === 0 && repeat.length > 0) {
-                this.setState({
-                    deck: _.shuffle(repeat),
-                    repeat: []
+
+            Animated.parallel([
+              Animated.timing(this.state.deckTop, {
+                toValue: height / 2,
+                duration: 0,
+                ActiveNativeDriver: true,
+              }),
+              Animated.timing(this.state.deckOpacity, {
+                  toValue: 0,
+                  duration: 0,
+                  ActiveNativeDriver: true,
+                })
+            ]).start(res => {
+              this.setState({
+                deck: _.shuffle(repeat),
+                repeat: [],
+                isInitializedDeckAnimation: false
+              }, () => {
+                this.initializeDeckAnimation();
+              });
             })
         }
         else if (this.state.deck.length === 0 && repeat.length === 0) {
@@ -126,6 +168,26 @@ export default class DeckWrapper extends Component {
     })
   }
 
+  renderCards = () => 
+    {
+      return this.state.deck.map((card, index) => 
+        <ClassicCard 
+        showResult={this.showResult}
+        cardSwiped={this.cardSwiped} 
+        general={index === this.state.deck.length - 1 ? true : false} 
+        key={card.id} 
+        index={index}>
+            {card}
+        </ClassicCard>
+      )
+  }
+  
+  renderCardsWithAnimatedWrapper = () => (
+    <Animated.View style={[styles.animatedContainer, {top: this.state.deckTop, opacity: this.state.deckOpacity}]}>
+      {this.renderCards()}
+    </Animated.View>
+  )
+
   render () {
     return (
         <View style={styles.container}>
@@ -136,18 +198,7 @@ export default class DeckWrapper extends Component {
             outputRange: [0, 1]
             }) }] }>{this.state.backgroundText}</Animated.Text>
 
-            {
-          this.state.deck.map((card, index) => 
-            <CardWrapper 
-            showResult={this.showResult}
-            cardSwiped={this.cardSwiped} 
-            general={index === this.state.deck.length - 1 ? true : false} 
-            key={card.id} 
-            index={index}>
-                {card}
-            </CardWrapper>
-          )
-            }
+            {!this.state.isInitializedDeckAnimation ? this.renderCardsWithAnimatedWrapper() : this.renderCards()}
 
             <Animated.Text 
             style={[styles.swipeText, 
@@ -162,8 +213,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
-    // backgroundColor: '#f0f0f0'
+    flex: 1
+  },
+  animatedContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1
   },
   text: {
     textAlign: 'center',
@@ -171,14 +227,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   doneText: {
+    width: width * 0.9,
     position: 'absolute',
     textAlign: 'center',
     fontSize: 20,
-    color: 'grey'
+    color: 'grey',
   },
   swipeText: {
     position: 'absolute',
-    top: height * 0.13,
+    top: width * SWIPE_TEXT_MULTIPLIER,
     fontSize: 35,
     fontWeight: 'bold',
     color: 'grey'

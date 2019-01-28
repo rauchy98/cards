@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import Swiper from './Swiper'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing } from 'react-native'
-import CardWrapper from './CardWrapper';
-import DeckWrapper from './DeckWrapper';
 import Router from './Router';
 
 const instructions = Platform.select({

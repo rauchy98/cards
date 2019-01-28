@@ -12,7 +12,7 @@ const instructions = Platform.select({
 
 const { height, width } = Dimensions.get('window');
 
-export default class CardWrapper extends Component {
+export default class ClassicCard extends Component {
 
   constructor(props) {
     super(props);
@@ -23,12 +23,11 @@ export default class CardWrapper extends Component {
       question: "",
       answer: "",
       show: "",
-      pan: new Animated.ValueXY({x: 0, y: 400}),
+      pan: new Animated.ValueXY({x: 0, y: 0}),
       color: new Animated.Value(0),
       rotate: new Animated.Value(0),
       cardScale: new Animated.Value(1),
       selected: new Animated.Value(0),
-      cardOpacity: new Animated.Value(0),
       radius: 200,
       isInRadius: 0
     };
@@ -130,7 +129,7 @@ export default class CardWrapper extends Component {
 
           setTimeout(() => {
             this.props.cardSwiped(this.props.children.id, result);
-          }, 700)
+          }, 300)
 
         }
         else {
@@ -154,23 +153,6 @@ export default class CardWrapper extends Component {
       answer,
       show: `${question}`
     })
-
-    setTimeout(() => {
-      Animated.timing(this.state.pan, {
-        toValue: { x: 0, y: 0 },
-        duration: 700,
-        easing: Easing.out(Easing.quad),
-        ActiveNativeDriver: true,
-      }).start();
-  
-      Animated.timing(this.state.cardOpacity, {
-        toValue: 1,
-        duration: 700,
-        easing: Easing.out(Easing.quad),
-        ActiveNativeDriver: true,
-      }).start();
-    }, 200)
-
   }
 
   removeCard = (dx) => dx <= 0 ? LEARNED : REPEAT;
@@ -208,7 +190,7 @@ export default class CardWrapper extends Component {
     }
 
     return (
-          <Animated.View style={[panStyle, styles.card, 
+          <Animated.View style={[this.props.general ? panStyle : null, styles.card, 
             {
               backgroundColor: this.state.pan.x.interpolate({
               inputRange: [-400, -40, 0, 40, 400],
@@ -217,11 +199,7 @@ export default class CardWrapper extends Component {
               borderWidth: this.state.selected.interpolate({
                 inputRange: [0, 1],
                 outputRange: [2, 7]
-              }),
-              opacity: this.state.cardOpacity.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 1]
-              }),
+              })
           }]} {...this.panResponder.panHandlers}>
               <Text style={styles.text}>{this.state.show}</Text>
           </Animated.View>
@@ -237,8 +215,8 @@ const styles = StyleSheet.create({
   card: {
     position: 'absolute',
     borderRadius: 4,
-    height: height*CARD_SIZE_MULTIPLIER,
-    width: (height*CARD_SIZE_MULTIPLIER) / 1.5,
+    height: width * 1.4,
+    width: width*0.9,
     borderColor: '#E1E1E1',
     justifyContent: 'center',
     backgroundColor: 'white',

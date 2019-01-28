@@ -1,5 +1,5 @@
 export const LEARNED = 'LEARNED';
 export const REPEAT = 'REPEAT';
 
-export const CARD_SIZE_MULTIPLIER = 0.6;
-export const ANOTHER_CARD_SIZE_MULTIPLIER = 0.5;
+export const SWIPE_TEXT_MULTIPLIER_18_9 = 0.13;
+export const SWIPE_TEXT_MULTIPLIER_16_9 = 0.17;

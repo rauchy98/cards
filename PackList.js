@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import Swiper from './Swiper'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing, TouchableOpacity  } from 'react-native'
-import CardWrapper from './CardWrapper';
-import DeckWrapper from './DeckWrapper';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',

@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import Swiper from './Swiper'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing } from 'react-native'
-import CardWrapper from './CardWrapper';
-import DeckWrapper from './DeckWrapper';
+import ClassicDeck from './ClassicDeck';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -29,7 +28,7 @@ export default class Application extends Component {
   render () {
     return (
       <View style={styles.container}>
-          <DeckWrapper deck={this.state.deck} />
+          <ClassicDeck deck={this.state.deck} />
       </View>
     )
   }
