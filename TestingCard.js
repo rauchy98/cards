@@ -130,25 +130,15 @@ export default class TestingCard extends Component {
     }
   }
 
-  firstButtonColorInterpolate = () => this.state.firstButtonColor.interpolate ({
+  colorInterpolate = {
     inputRange: [-1, 0, 1],
-    outputRange: ['rgba(0, 200, 0, 0.3)','rgba(255, 255, 255, 1)', 'rgba(220, 0, 0, 0.3)']
-  })
+    outputRange: ['rgba(124, 255, 117, 0.5)','rgba(255, 255, 255, 1)', 'rgba(255, 117, 117, 0.5)']
+  };
 
-  secondButtonColorInterpolate = () => this.state.secondButtonColor.interpolate ({
-    inputRange: [-1, 0, 1],
-    outputRange: ['rgba(0, 200, 0, 0.3)','rgba(255, 255, 255, 1)', 'rgba(220, 0, 0, 0.3)']
-  })
-
-  thirdButtonColorInterpolate = () => this.state.thirdButtonColor.interpolate ({
-    inputRange: [-1, 0, 1],
-    outputRange: ['rgba(0, 200, 0, 0.3)','rgba(255, 255, 255, 1)', 'rgba(220, 0, 0, 0.3)']
-  })
-
-  fourthButtonColorInterpolate = () => this.state.fourthButtonColor.interpolate ({
-    inputRange: [-1, 0, 1],
-    outputRange: ['rgba(0, 200, 0, 0.3)','rgba(255, 255, 255, 1)', 'rgba(220, 0, 0, 0.3)']
-  })
+  firstButtonColorInterpolate = () => this.state.firstButtonColor.interpolate(this.colorInterpolate);
+  secondButtonColorInterpolate = () => this.state.secondButtonColor.interpolate(this.colorInterpolate);
+  thirdButtonColorInterpolate = () => this.state.thirdButtonColor.interpolate(this.colorInterpolate);
+  fourthButtonColorInterpolate = () => this.state.fourthButtonColor.interpolate(this.colorInterpolate);
 
   render () {
     const panStyle = {
@@ -175,9 +165,14 @@ export default class TestingCard extends Component {
             {
               backgroundColor: this.state.pan.x.interpolate({
               inputRange: [-400, -40, 0, 40, 400],
-              outputRange: ['rgba(0, 200, 0, 0.3)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(220, 0, 0, 0.3)']
+              outputRange: ['rgba(124, 255, 117, 0.5)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(255, 117, 117, 0.5)']
             })
           }]}>
+            <TouchableOpacity
+              onPress={() => this.props.addToFavorites(this.props.children.question, this.props.children.answer)}
+              style={styles.addToFavoritesContainer}>
+              <Text style={styles.addToFavoritesText}>+</Text>
+            </TouchableOpacity>
             <View style={styles.questionContainer}><Text style={styles.questionText}>{this.props.children.question}</Text></View>
             <View style={styles.optionsContainer}>
 
@@ -241,6 +236,23 @@ const styles = StyleSheet.create({
     height: '65%',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  addToFavoritesContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 35,
+    height: 35,
+    backgroundColor: '#F0F0F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50
+  },
+  addToFavoritesText: {
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontWeight: '500',
+    fontSize: 18
   },
   questionText: {
     fontSize: 35,

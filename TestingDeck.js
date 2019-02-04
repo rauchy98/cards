@@ -28,11 +28,18 @@ export default class TestingDeck extends Component {
     initializeAnimation: false,
     deckTop: new Animated.Value(height / 2),
     deckOpacity: new Animated.Value(0),
-    isInitializedDeckAnimation: false
+    isInitializedDeckAnimation: false,
+    error: false
   };
 
   componentWillMount() {
       const deck = _.clone(this.props.deck);
+      if (deck.length < 4) {
+        this.setState({
+          error: true,
+          backgroundText: 'For run testing mode deck must have at least 4 cards'
+        })
+      }
       const answers = [];
       deck.map(card => answers.push(card.answer));
 
@@ -181,6 +188,7 @@ export default class TestingDeck extends Component {
     {
       return this.state.deck.map((card, index) => 
         <TestingCard 
+        addToFavorites={this.props.addToFavorites}
         optionChoosed={this.optionChoosed}
         showResult={this.showResult}
         cardSwiped={this.cardSwiped} 
@@ -198,6 +206,8 @@ export default class TestingDeck extends Component {
     </Animated.View>
   )
 
+  showCards = () => !this.state.isInitializedDeckAnimation ? this.renderCardsWithAnimatedWrapper() : this.renderCards()
+
   render () {
     return (
         <View style={styles.container}>
@@ -208,7 +218,7 @@ export default class TestingDeck extends Component {
             outputRange: [0, 1]
             }) }] }>{this.state.backgroundText}</Animated.Text>
 
-            {!this.state.isInitializedDeckAnimation ? this.renderCardsWithAnimatedWrapper() : this.renderCards()}
+            {!this.state.error ? this.showCards() : null}
 
             <Animated.Text 
             style={[styles.swipeText, 

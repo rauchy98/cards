@@ -16,6 +16,23 @@ export class Actions {
     }
 
 
+    static addToFavorites(question, answer) {
+        return {
+            type: types.ADD_TO_FAVORITES,
+            question,
+            answer
+        }
+    }
+
+    static removeCardFromCollection(collectionName, question) {
+        return {
+            type: types.REMOVE_CARD_FROM_COLLECTION,
+            collectionName,
+            question
+        }
+    }
+
+
     static resetCollection() {
         return {
             type: types.RESET_COLLECTION

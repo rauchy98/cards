@@ -5,6 +5,7 @@ import { Actions } from './Actions';
 import { connect } from 'react-redux';
 import { CLASSIC_MODE, TESTING_MODE } from './constants';
 import TestingDeck from './TestingDeck';
+import { DropDownHolder } from './DropDownHolder';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -17,25 +18,25 @@ const { height, width } = Dimensions.get('window');
 
 class Application extends Component {
 
-  state = {
-    deck: [
-    {id: 1, question: 'Apple', answer: 'Яблуко'},
-    {id: 2, question: 'Blackberry', answer: 'Ожина'},
-    {id: 3, question: 'Melon', answer: 'Диня'},
-    {id: 4, question: 'Peach', answer: 'Персик'},
-    {id: 5, question: 'Redcurrant', answer: 'Смородина'},
-    {id: 6, question: 'Pomegranate', answer: 'Гранат'},
-    {id: 7, question: 'Plum', answer: 'Слива'}]
-  };
-
   componentWillUnmount() {
     this.props.resetCollection();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.collectionMessage && (this.props.collectionMessage !== nextProps.collectionMessage)) {
+      DropDownHolder.alert('info', 'Success!', nextProps.collectionMessage);
+    }
+  }
+
   renderMode() {
+    const commonProps = {
+      deck: this.props.currentCollection.deck,
+      addToFavorites: this.props.addToFavorites,
+    };
+
     switch(this.props.currentMode) {
-      case CLASSIC_MODE: return <ClassicDeck deck={this.props.currentCollection.deck} />
-      case TESTING_MODE: return <TestingDeck deck={this.props.currentCollection.deck} />
+      case CLASSIC_MODE: return <ClassicDeck {...commonProps} />
+      case TESTING_MODE: return <TestingDeck {...commonProps} />
     }
   }
 
@@ -57,12 +58,14 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   return {
+    collectionMessage: state.collectionsStore.message,
     currentCollection: state.collectionsStore.current,
     currentMode: state.modesStore.selectedMode,
   }
 };
 
 const mapDispatchToProps = (dispatch) => ({
+  addToFavorites: (question, answer) => dispatch(Actions.addToFavorites(question, answer)),
   resetCollection: () => dispatch(Actions.resetCollection()),
 });
 

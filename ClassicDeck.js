@@ -171,6 +171,7 @@ export default class ClassicDeck extends Component {
     {
       return this.state.deck.map((card, index) => 
         <ClassicCard 
+        addToFavorites={this.props.addToFavorites}
         showResult={this.showResult}
         cardSwiped={this.cardSwiped} 
         general={index === this.state.deck.length - 1 ? true : false} 

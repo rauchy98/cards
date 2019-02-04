@@ -4,6 +4,8 @@ import { createStore } from 'redux';
 import Reducer from './reducers/reducer';
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing } from 'react-native'
 import Router from './Router';
+import DropdownAlert from 'react-native-dropdownalert';
+import { DropDownHolder } from './DropDownHolder';
 
 const store = createStore(Reducer);
 
@@ -33,6 +35,7 @@ export default class App extends Component {
     return (
       <Provider store={ store }>
         <Router />
+        <DropdownAlert infoColor='#AFAFAF' closeInterval={1000} ref={(ref) => DropDownHolder.setDropDown(ref)}/>
       </Provider>
     )
   }

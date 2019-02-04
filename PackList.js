@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing, TouchableOpacity  } from 'react-native'
 import { connect } from 'react-redux';
 import { Actions } from './Actions';
+import { APPLICATION, COLLECTION_EDITOR } from './types';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -20,7 +21,15 @@ class PackList extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.isCollectionSelected && nextProps.isCollectionSelected) {
-      this.props.navigation.navigate('Application');
+
+      const mode = this.props.navigation.getParam('mode');
+
+      if (mode === APPLICATION) {
+        this.props.navigation.navigate('Application');
+      }
+      else if (mode === COLLECTION_EDITOR) {
+        this.props.navigation.navigate('CollectionEditor');
+      }
     }
   }
 

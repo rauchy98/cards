@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing, TouchableOpacity  } from 'react-native'
 import { connect } from 'react-redux';
 import { Actions } from './Actions';
+import { APPLICATION, COLLECTION_EDITOR } from './types';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -16,7 +17,7 @@ class Home extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.isModeSelected && nextProps.isModeSelected) {
-      this.props.navigation.navigate('PackList');
+      this.props.navigation.navigate('PackList', {mode: APPLICATION});
     }
   }
 
@@ -24,14 +25,17 @@ class Home extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.logoText}>Cards</Text>
-        <View style={styles.buttonsContainer}>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('PackList', {mode: COLLECTION_EDITOR})} style={styles.editCollectionButton}>
+          <Text style={styles.editCollectionText}>Collection Editor</Text>
+        </TouchableOpacity>
+        <View style={styles.mainButtonsContainer}>
           {
             this.props.modes.map((mode, index) => {            
             return <TouchableOpacity 
             key={index}
-            style={styles.button}
+            style={styles.mainButton}
             onPress={() => { this.props.setMode(mode) }}>
-                <Text style={styles.buttonText}>{mode}</Text>
+                <Text style={styles.mainButtonText}>{mode}</Text>
             </TouchableOpacity>
             })
           }
@@ -54,17 +58,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     backgroundColor: 'transparent'
   },
-  button: {
+  mainButton: {
     margin: 8,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     padding: 25,
     borderRadius: 50
   },
-  buttonsContainer: {
+  mainButtonsContainer: {
     marginTop: 15
   },
-  buttonText: {
+  mainButtonText: {
     fontSize: 20,
+    fontWeight: 'bold'
+  },
+  editCollectionButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    padding: 12,
+    borderRadius: 50,
+    position: 'absolute', 
+    top: 20, 
+    right: 20
+  },
+  editCollectionText: {
+    fontSize: 14,
     fontWeight: 'bold'
   }
 })
