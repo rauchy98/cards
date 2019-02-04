@@ -32,8 +32,18 @@ export default class TestingDeck extends Component {
   };
 
   componentWillMount() {
+      const deck = _.clone(this.props.deck);
+      const answers = [];
+      deck.map(card => answers.push(card.answer));
+
+      const newDeck = deck.map(card => { 
+          const answersForCard = answers.filter(answer => answer !== card.answer);
+          _.shuffle(answersForCard);
+          return {...card, options: _.shuffle([card.answer, answersForCard[1], answersForCard[2], answersForCard[3]]) } 
+        })
+      
       this.setState({
-          deck: _.shuffle(this.props.deck)
+          deck: _.shuffle(newDeck)
       })
   }
 
@@ -84,7 +94,7 @@ export default class TestingDeck extends Component {
     })
   }
 
-  cardSwiped = (cardId, result) => {
+  optionChoosed = (cardId, result) => {
     const deck = this.state.deck;
     const cardIndex = deck.findIndex(card => card.id === cardId);
     const repeat = this.state.repeat;
@@ -154,7 +164,7 @@ export default class TestingDeck extends Component {
             ActiveNativeDriver: true,
           }).start(() => {
             this.setState({
-                backgroundText: `That's all`
+                backgroundText: `Good job!`
             }, () => {
                 Animated.timing(this.state.backgroundTextOpacity, {
                     toValue: 1,
@@ -171,6 +181,7 @@ export default class TestingDeck extends Component {
     {
       return this.state.deck.map((card, index) => 
         <TestingCard 
+        optionChoosed={this.optionChoosed}
         showResult={this.showResult}
         cardSwiped={this.cardSwiped} 
         general={index === this.state.deck.length - 1 ? true : false} 

@@ -154,7 +154,7 @@ export default class ClassicDeck extends Component {
             ActiveNativeDriver: true,
           }).start(() => {
             this.setState({
-                backgroundText: `That's all`
+                backgroundText: `Good job!`
             }, () => {
                 Animated.timing(this.state.backgroundTextOpacity, {
                     toValue: 1,
