@@ -1,10 +1,10 @@
 import * as types from '../types';
-import { CLASSIC_MODE, TESTING_MODE } from '../constants';
+import { CLASSIC_MODE, TESTING_MODE, WRITING_MODE } from '../constants';
 
 const INITIAL_STATE = {
   selectedMode: null,
   isModeSelected: false,
-  modes: [CLASSIC_MODE, TESTING_MODE]
+  modes: [CLASSIC_MODE, TESTING_MODE, WRITING_MODE]
 };
 
 export const modeReducer = (state = INITIAL_STATE, action) => {

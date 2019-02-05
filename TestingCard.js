@@ -209,7 +209,6 @@ export default class TestingCard extends Component {
               </TouchableOpacity>
 
             </View>
-              {/* <Text style={styles.text}>{this.state.show}</Text> */}
           </Animated.View>
     )
   }

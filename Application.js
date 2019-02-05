@@ -3,9 +3,10 @@ import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Ani
 import ClassicDeck from './ClassicDeck';
 import { Actions } from './Actions';
 import { connect } from 'react-redux';
-import { CLASSIC_MODE, TESTING_MODE } from './constants';
+import { CLASSIC_MODE, TESTING_MODE, WRITING_MODE } from './constants';
 import TestingDeck from './TestingDeck';
 import { DropDownHolder } from './DropDownHolder';
+import WritingDeck from './WritingDeck';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -37,6 +38,7 @@ class Application extends Component {
     switch(this.props.currentMode) {
       case CLASSIC_MODE: return <ClassicDeck {...commonProps} />
       case TESTING_MODE: return <TestingDeck {...commonProps} />
+      case WRITING_MODE: return <WritingDeck {...commonProps} />
     }
   }
 

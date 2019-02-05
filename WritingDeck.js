@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { Button, StyleSheet, Text, View, Platform, Dimensions, PanResponder, Animated, Easing } from 'react-native'
-import ClassicCard from './ClassicCard';
+import TestingCard from './TestingCard';
 import { REPEAT, LEARNED, SWIPE_TEXT_MULTIPLIER_16_9, SWIPE_TEXT_MULTIPLIER_18_9 } from './constants';
 import _ from 'lodash';
+import WritingCard from './WritingCard';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -15,7 +16,7 @@ const { height, width } = Dimensions.get('window');
 
 const SWIPE_TEXT_MULTIPLIER = height / width === 16 / 9 ? SWIPE_TEXT_MULTIPLIER_16_9 : SWIPE_TEXT_MULTIPLIER_18_9;
 
-export default class ClassicDeck extends Component {
+export default class WritingDeck extends Component {
 
   state = {
     dx: new Animated.Value(0),
@@ -28,12 +29,29 @@ export default class ClassicDeck extends Component {
     initializeAnimation: false,
     deckTop: new Animated.Value(height / 2),
     deckOpacity: new Animated.Value(0),
-    isInitializedDeckAnimation: false
+    isInitializedDeckAnimation: false,
+    error: false
   };
 
   componentWillMount() {
+      const deck = _.clone(this.props.deck);
+      if (deck.length < 4) {
+        this.setState({
+          error: true,
+          backgroundText: 'For run testing mode deck must have at least 4 cards'
+        })
+      }
+      const answers = [];
+      deck.map(card => answers.push(card.answer));
+
+      const newDeck = deck.map(card => { 
+          const answersForCard = answers.filter(answer => answer !== card.answer);
+          _.shuffle(answersForCard);
+          return {...card, options: _.shuffle([card.answer, answersForCard[1], answersForCard[2], answersForCard[3]]) } 
+        })
+      
       this.setState({
-          deck: _.shuffle(this.props.deck)
+          deck: _.shuffle(newDeck)
       })
   }
 
@@ -84,7 +102,7 @@ export default class ClassicDeck extends Component {
     })
   }
 
-  cardSwiped = (cardId, result) => {
+  optionChoosed = (cardId, result) => {
     const deck = this.state.deck;
     const cardIndex = deck.findIndex(card => card.id === cardId);
     const repeat = this.state.repeat;
@@ -170,15 +188,16 @@ export default class ClassicDeck extends Component {
   renderCards = () => 
     {
       return this.state.deck.map((card, index) => 
-        <ClassicCard 
+        <WritingCard 
         addToFavorites={this.props.addToFavorites}
+        optionChoosed={this.optionChoosed}
         showResult={this.showResult}
         cardSwiped={this.cardSwiped} 
         general={index === this.state.deck.length - 1 ? true : false} 
         key={card.id} 
         index={index}>
             {card}
-        </ClassicCard>
+        </WritingCard>
       )
   }
   
